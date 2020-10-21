@@ -3,6 +3,8 @@
     <string name="app_name">TuCam</string>
     <string name="capture_button_alt">Capture</string>
     <string name="switch_camera_button_alt">Switch camera</string>
+    <string name="select_filter_button_alt">Select filter</string>
+    <string name="select_frame_button_alt">Select frame</string>
     <string name="gallery_button_alt">Gallery</string>
     <string name="back_button_alt">Back</string>
     <string name="share_button_alt">Share</string>

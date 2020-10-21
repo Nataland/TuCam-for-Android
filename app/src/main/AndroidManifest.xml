@@ -27,7 +27,7 @@
             android:clearTaskOnLaunch="true"
             android:theme="@style/AppTheme"
             android:icon="@mipmap/ic_launcher"
-            android:screenOrientation="fullUser"
+            android:screenOrientation="portrait"
             android:rotationAnimation="seamless"
             tools:targetApi="O">
 
