@@ -68,7 +68,7 @@ typealias LumaListener = (luma: Double) -> Unit
 class CameraFragment : Fragment() {
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
-    private lateinit var effectsPreviewAdapter: RecyclerView.Adapter<*>
+    private lateinit var effectsPreviewAdapter: EffectsPreviewAdapter
     private lateinit var effectsPreviewManager: RecyclerView.LayoutManager
 
     private var displayId: Int = -1
@@ -251,6 +251,9 @@ class CameraFragment : Fragment() {
     private fun setUpEffectsPreview() {
         effectsPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         effectsPreviewAdapter = EffectsPreviewAdapter(listOfFrameEffects) // for now this only takes in frames
+        effectsPreviewAdapter.frameSelectedLiveData.observeForever {
+            frame_overlay.setImageResource(listOfFrames[it])
+        }
         effects_preview.layoutManager = effectsPreviewManager
         effects_preview.adapter = effectsPreviewAdapter
     }

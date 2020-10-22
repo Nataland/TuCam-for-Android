@@ -3,12 +3,18 @@ package com.android.example.nataland.fragments
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.android.example.nataland.R
 import kotlinx.android.synthetic.main.view_effects_preview.view.*
 
-class EffectsPreviewAdapter(private val effects: List<CameraFragment.Effect>) :
-    RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {
+class EffectsPreviewAdapter(
+    private val effects: List<CameraFragment.Effect>
+) : RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {
+
+    private val _frameSelectedLiveData = MutableLiveData<Int>()
+    val frameSelectedLiveData: LiveData<Int> = _frameSelectedLiveData
 
     class PreviewViewHolder(val previewView: View) : RecyclerView.ViewHolder(previewView)
 
@@ -26,7 +32,7 @@ class EffectsPreviewAdapter(private val effects: List<CameraFragment.Effect>) :
             }
             is CameraFragment.Effect.Frame -> {
                 holder.previewView.frame.setImageResource(effect.frameId)
-                holder.previewView.setOnClickListener { } // change frame selected using live data
+                holder.previewView.setOnClickListener { _frameSelectedLiveData.postValue(position) } // change frame selected using live data
             }
         }
     }
