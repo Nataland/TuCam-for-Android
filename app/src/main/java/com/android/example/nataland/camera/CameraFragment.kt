@@ -18,12 +18,11 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -426,7 +425,7 @@ class CameraFragment : Fragment() {
         }
 
         // Setup for button used to switch cameras
-        controls.camera_switch_button.let {
+        camera_switch_button.let {
 
             // Disable the button until the camera is set up
             it.isEnabled = false
@@ -455,13 +454,13 @@ class CameraFragment : Fragment() {
 //            }
         }
 
-        reserved_button.setOnClickListener {
-            // todo: make this a timer?
-        }
-
         // Listener for button used to change frames
         controls.frame_selection_button.setOnClickListener {
-            effects_preview.isInvisible = !effects_preview.isInvisible
+            effects_preview.isVisible = !effects_preview.isVisible
+            val mediumIconSize = requireContext().resources.getDimensionPixelSize(R.dimen.round_button_medium).toFloat()
+            val largeIconSize = requireContext().resources.getDimensionPixelSize(R.dimen.round_button_large).toFloat()
+            val scale = if (effects_preview.isVisible) mediumIconSize / largeIconSize else 1f
+            camera_capture_button.animate().scaleX(scale).scaleY(scale).apply { duration = 100 }.start()
         }
     }
 

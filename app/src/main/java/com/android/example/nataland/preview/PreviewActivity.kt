@@ -2,6 +2,7 @@ package com.android.example.nataland.preview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.android.example.nataland.R
 import kotlinx.android.synthetic.main.activity_preview.*
@@ -12,6 +13,7 @@ class PreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview)
         setSupportActionBar(preview_toolbar)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         val imageUriInString = intent.getStringExtra(IMAGE_URI_TAG)
         val frameId = intent.getIntExtra(FRAME_ID_TAG, 0)
