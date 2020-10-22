@@ -1,4 +1,4 @@
-package com.android.example.nataland.fragments
+package com.android.example.nataland.camera
 
 import android.Manifest
 import android.content.Context

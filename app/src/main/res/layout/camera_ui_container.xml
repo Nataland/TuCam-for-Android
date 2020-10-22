@@ -26,7 +26,7 @@
         android:padding="@dimen/spacing_large"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/camera_switch_button"
+        app:layout_constraintEnd_toStartOf="@id/reserved_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/effects_preview"
         app:srcCompat="@drawable/ic_photo" />
@@ -40,8 +40,8 @@
         android:padding="@dimen/spacing_small"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/camera_capture_button"
-        app:layout_constraintStart_toEndOf="@id/photo_view_button"
+        app:layout_constraintEnd_toStartOf="@id/frame_selection_button"
+        app:layout_constraintStart_toEndOf="@id/camera_capture_button"
         app:layout_constraintTop_toBottomOf="@id/effects_preview"
         app:srcCompat="@drawable/ic_switch" />
 
@@ -58,7 +58,7 @@
         app:layout_constraintTop_toBottomOf="@id/effects_preview" />
 
     <ImageButton
-        android:id="@+id/filter_selection_button"
+        android:id="@+id/reserved_button"
         android:layout_width="@dimen/round_button_medium"
         android:layout_height="@dimen/round_button_medium"
         android:background="@android:color/transparent"
@@ -66,9 +66,10 @@
         android:padding="@dimen/spacing_small"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/frame_selection_button"
-        app:layout_constraintStart_toEndOf="@id/camera_capture_button"
+        app:layout_constraintEnd_toStartOf="@id/camera_capture_button"
+        app:layout_constraintStart_toEndOf="@id/photo_view_button"
         app:layout_constraintTop_toBottomOf="@id/effects_preview"
+        android:visibility="invisible"
         app:srcCompat="@drawable/ic_filter" />
 
     <ImageButton
@@ -81,7 +82,7 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/filter_selection_button"
+        app:layout_constraintStart_toEndOf="@id/camera_switch_button"
         app:layout_constraintTop_toBottomOf="@id/effects_preview"
         app:srcCompat="@drawable/ic_frame" />
 </androidx.constraintlayout.widget.ConstraintLayout>

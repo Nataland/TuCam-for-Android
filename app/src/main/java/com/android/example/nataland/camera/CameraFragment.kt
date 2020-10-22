@@ -1,4 +1,4 @@
-package com.android.example.nataland.fragments
+package com.android.example.nataland.camera
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -9,7 +9,6 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,13 +18,11 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.MimeTypeMap
 import androidx.annotation.DrawableRes
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import androidx.core.view.isInvisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
@@ -34,10 +31,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.example.nataland.KEY_EVENT_ACTION
-import com.android.example.nataland.KEY_EVENT_EXTRA
-import com.android.example.nataland.MainActivity
 import com.android.example.nataland.R
+import com.android.example.nataland.preview.PreviewActivity
+import com.android.example.nataland.preview.PreviewActivity.Companion.FRAME_ID_TAG
+import com.android.example.nataland.preview.PreviewActivity.Companion.IMAGE_URI_TAG
 import com.android.example.nataland.utils.ANIMATION_FAST_MILLIS
 import com.android.example.nataland.utils.ANIMATION_SLOW_MILLIS
 import com.android.example.nataland.utils.simulateClick
@@ -68,7 +65,7 @@ typealias LumaListener = (luma: Double) -> Unit
 class CameraFragment : Fragment() {
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
-    private lateinit var effectsPreviewAdapter: EffectsPreviewAdapter
+    private lateinit var framesPreviewAdapter: FramesPreviewAdapter
     private lateinit var effectsPreviewManager: RecyclerView.LayoutManager
 
     private var displayId: Int = -1
@@ -78,6 +75,7 @@ class CameraFragment : Fragment() {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
+    private var chosenFrameIndex = 0
 
     private val listOfFrames = listOf(
         R.drawable.frame0, R.drawable.frame1, R.drawable.frame2, R.drawable.frame3, R.drawable.frame4,
@@ -87,7 +85,6 @@ class CameraFragment : Fragment() {
         R.drawable.frame20, R.drawable.frame21, R.drawable.frame22, R.drawable.frame23, R.drawable.frame24,
         R.drawable.frame25, R.drawable.frame26, R.drawable.frame27, R.drawable.frame28
     )
-    private val listOfFrameEffects = listOfFrames.map { Effect.Frame(it) }
 
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -250,12 +247,13 @@ class CameraFragment : Fragment() {
 
     private fun setUpEffectsPreview() {
         effectsPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        effectsPreviewAdapter = EffectsPreviewAdapter(listOfFrameEffects) // for now this only takes in frames
-        effectsPreviewAdapter.frameSelectedLiveData.observeForever {
+        framesPreviewAdapter = FramesPreviewAdapter(listOfFrames) // for now this only takes in frames
+        framesPreviewAdapter.frameSelectedLiveData.observeForever {
+            chosenFrameIndex = it
             frame_overlay.setImageResource(listOfFrames[it])
         }
         effects_preview.layoutManager = effectsPreviewManager
-        effects_preview.adapter = effectsPreviewAdapter
+        effects_preview.adapter = framesPreviewAdapter
     }
 
     /** Declare and bind preview, capture and analysis use cases */
@@ -310,7 +308,7 @@ class CameraFragment : Fragment() {
                     // Values returned from our analyzer are passed to the attached listener
                     // We log image analysis results here - you should do something useful
                     // instead!
-                    Log.d(TAG, "Average luminosity: $luma")
+//                    Log.d(TAG, "Average luminosity: $luma")
                 })
             }
 
@@ -379,32 +377,38 @@ class CameraFragment : Fragment() {
                             val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                             Log.d(TAG, "Photo capture succeeded: $savedUri")
 
-                            // We can only change the foreground Drawable using API level 23+ API
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                // Update the gallery thumbnail with latest picture taken
-                                setGalleryThumbnail(savedUri)
+                            val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
+                                putExtra(IMAGE_URI_TAG, savedUri.toString())
+                                putExtra(FRAME_ID_TAG, listOfFrames[chosenFrameIndex])
                             }
-
-                            // Implicit broadcasts will be ignored for devices running API level >= 24
-                            // so if you only target API level 24+ you can remove this statement
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                                requireActivity().sendBroadcast(
-                                    Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
-                                )
-                            }
-
-                            // If the folder selected is an external media directory, this is
-                            // unnecessary but otherwise other apps will not be able to access our
-                            // images unless we scan them using [MediaScannerConnection]
-                            val mimeType = MimeTypeMap.getSingleton()
-                                .getMimeTypeFromExtension(savedUri.toFile().extension)
-                            MediaScannerConnection.scanFile(
-                                context,
-                                arrayOf(savedUri.toFile().absolutePath),
-                                arrayOf(mimeType)
-                            ) { _, uri ->
-                                Log.d(TAG, "Image capture scanned into media store: $uri")
-                            }
+                            requireActivity().startActivity(intent)
+//
+//                            // We can only change the foreground Drawable using API level 23+ API
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                // Update the gallery thumbnail with latest picture taken
+//                                setGalleryThumbnail(savedUri)
+//                            }
+//
+//                            // Implicit broadcasts will be ignored for devices running API level >= 24
+//                            // so if you only target API level 24+ you can remove this statement
+//                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+//                                requireActivity().sendBroadcast(
+//                                    Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
+//                                )
+//                            }
+//
+//                            // If the folder selected is an external media directory, this is
+//                            // unnecessary but otherwise other apps will not be able to access our
+//                            // images unless we scan them using [MediaScannerConnection]
+//                            val mimeType = MimeTypeMap.getSingleton()
+//                                .getMimeTypeFromExtension(savedUri.toFile().extension)
+//                            MediaScannerConnection.scanFile(
+//                                context,
+//                                arrayOf(savedUri.toFile().absolutePath),
+//                                arrayOf(mimeType)
+//                            ) { _, uri ->
+//                                Log.d(TAG, "Image capture scanned into media store: $uri")
+//                            }
                         }
                     })
 
@@ -441,18 +445,18 @@ class CameraFragment : Fragment() {
 
         // Listener for button used to view the most recent photo
         controls.photo_view_button.setOnClickListener {
+            // todo: pick photo from gallery
             // Only navigate when the gallery has photos
-            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-                Navigation.findNavController(
-                    requireActivity(), R.id.fragment_container
-                ).navigate(CameraFragmentDirections
-                    .actionCameraToGallery(outputDirectory.absolutePath))
-            }
+//            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
+//                Navigation.findNavController(
+//                    requireActivity(), R.id.fragment_container
+//                ).navigate(CameraFragmentDirections
+//                    .actionCameraToGallery(outputDirectory.absolutePath))
+//            }
         }
 
-        // Listener for button used to change filters
-        controls.filter_selection_button.setOnClickListener {
-            // todo
+        reserved_button.setOnClickListener {
+            // todo: make this a timer?
         }
 
         // Listener for button used to change frames
@@ -577,10 +581,5 @@ class CameraFragment : Fragment() {
         private fun createFile(baseFolder: File, format: String, extension: String) =
             File(baseFolder, SimpleDateFormat(format, Locale.US)
                 .format(System.currentTimeMillis()) + extension)
-    }
-
-    sealed class Effect {
-        data class Filter(@DrawableRes val effectId: Int) : Effect()
-        data class Frame(@DrawableRes val frameId: Int) : Effect()
     }
 }

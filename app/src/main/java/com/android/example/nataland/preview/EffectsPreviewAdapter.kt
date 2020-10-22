@@ -1,4 +1,4 @@
-package com.android.example.nataland.fragments
+package com.android.example.nataland.preview
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.android.example.nataland.R
-import kotlinx.android.synthetic.main.view_effects_preview.view.*
 
 class EffectsPreviewAdapter(
-    private val effects: List<CameraFragment.Effect>
+    private val effects: List<Int>
 ) : RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {
 
-    private val _frameSelectedLiveData = MutableLiveData<Int>()
-    val frameSelectedLiveData: LiveData<Int> = _frameSelectedLiveData
+    private val _effectSelectedLiveData = MutableLiveData<Int>()
+    val effectSelectedLiveData: LiveData<Int> = _effectSelectedLiveData
 
     class PreviewViewHolder(val previewView: View) : RecyclerView.ViewHolder(previewView)
 
@@ -26,15 +25,8 @@ class EffectsPreviewAdapter(
     }
 
     override fun onBindViewHolder(holder: PreviewViewHolder, position: Int) {
-        when (val effect = effects[position]) {
-            is CameraFragment.Effect.Filter -> {
-                // todo
-            }
-            is CameraFragment.Effect.Frame -> {
-                holder.previewView.frame.setImageResource(effect.frameId)
-                holder.previewView.setOnClickListener { _frameSelectedLiveData.postValue(position) } // change frame selected using live data
-            }
-        }
+//        holder.previewView.effects_preview_root.setImageResource(effects[position]) // set filter
+        holder.previewView.setOnClickListener { _effectSelectedLiveData.postValue(position) } // change frame selected using live data
     }
 
     override fun getItemCount() = effects.size

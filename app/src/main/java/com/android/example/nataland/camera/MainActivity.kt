@@ -1,4 +1,4 @@
-package com.android.example.nataland
+package com.android.example.nataland.camera
 
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +8,7 @@ import java.io.File
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.content.Intent
 import android.widget.FrameLayout
+import com.android.example.nataland.R
 import com.android.example.nataland.utils.FLAGS_FULLSCREEN
 
 const val KEY_EVENT_ACTION = "key_event_action"
