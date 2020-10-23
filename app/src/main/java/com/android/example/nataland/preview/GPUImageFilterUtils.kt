@@ -17,15 +17,15 @@ object GPUImageFilterUtils {
 
     val defaultFilters: List<FilterInfo> = listOf(
         FilterInfo("Original", FilterType.NO_FILTER, R.drawable.original_demo),
-        FilterInfo("Sepia", FilterType.SEPIA, R.drawable.sepia_demo), // 1.0f
+        FilterInfo("Sepia", FilterType.SEPIA, R.drawable.sepia_demo),
         FilterInfo("Grayscale", FilterType.GRAYSCALE, R.drawable.grayscale_demo),
-        FilterInfo("Monochrome", FilterType.MONOCHROME, R.drawable.monochrome_demo), // 1.0f
-        FilterInfo("Vignette", FilterType.VIGNETTE, R.drawable.vignette_demo), // 0.2f
+        FilterInfo("Monochrome", FilterType.MONOCHROME, R.drawable.monochrome_demo),
+        FilterInfo("Vignette", FilterType.VIGNETTE, R.drawable.vignette_demo),
         FilterInfo("Lookup (Amatorka)", FilterType.LOOKUP_AMATORKA, R.drawable.amatorka_demo),
         FilterInfo("Smooth Toon", FilterType.SMOOTH_TOON, R.drawable.smooth_toon_demo),
         FilterInfo("False Color", FilterType.FALSE_COLOR, R.drawable.false_color_demo),
         FilterInfo("Zoom Blur", FilterType.ZOOM_BLUR, R.drawable.zoom_blur_demo),
-        FilterInfo("Vibrance", FilterType.VIBRANCE, R.drawable.vibrance_demo) // 1.2f
+        FilterInfo("Vibrance", FilterType.VIBRANCE, R.drawable.vibrance_demo)
     )
 
     fun createFilterForType(context: Context, type: FilterType): GPUImageFilter {
@@ -204,7 +204,7 @@ object GPUImageFilterUtils {
             FilterType.ZOOM_BLUR -> GPUImageZoomBlurFilter()
             FilterType.TRANSFORM2D -> GPUImageTransformFilter()
             FilterType.SOLARIZE -> GPUImageSolarizeFilter()
-            FilterType.VIBRANCE -> GPUImageVibranceFilter()
+            FilterType.VIBRANCE -> GPUImageVibranceFilter(1.2f)
             FilterType.NO_FILTER -> GPUImageFilter()
         }
     }
