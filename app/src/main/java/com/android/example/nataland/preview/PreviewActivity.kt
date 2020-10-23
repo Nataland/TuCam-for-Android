@@ -46,11 +46,12 @@ class PreviewActivity : AppCompatActivity() {
         // Todo: configure recycler view with effect previews
 
         effectsPreviewManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        effectsPreviewAdapter = EffectsPreviewAdapter(processedSampleImages)
-        image_preview.setImageURI(imageUri)
+        effectsPreviewAdapter = EffectsPreviewAdapter()
+        image_preview.setImage(imageUri)
         effects_preview.layoutManager = effectsPreviewManager
         effects_preview.adapter = effectsPreviewAdapter
         effectsPreviewAdapter.effectSelectedLiveData.observeForever {
+            image_preview.filter = GPUImageFilterUtils.createFilterForType(this, GPUImageFilterUtils.defaultFilters[it].filterType)
 //            image_preview.setImageBitmap(images[it].gpuImage.bitmapWithFilterApplied)
         }
     }
