@@ -1,4 +1,4 @@
-package com.android.example.nataland.camera
+package com.android.nataland.tucam.camera
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.android.example.nataland.R
+import com.android.nataland.tucam.R
 import kotlinx.android.synthetic.main.view_frames_preview.view.*
 
 class FramesPreviewAdapter(

@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.android.example.nataland">
+    package="com.android.nataland.tucam">
 
     <!-- Enable instant app support -->
     <dist:module dist:instant="true" />
@@ -24,7 +24,7 @@
         tools:ignore="AllowBackup">
 
         <activity
-            android:name=".camera.MainActivity"
+            android:name="com.android.nataland.tucam.camera.MainActivity"
             android:clearTaskOnLaunch="true"
             android:icon="@mipmap/ic_launcher"
             android:rotationAnimation="seamless"
@@ -66,7 +66,7 @@
 
         </activity>
         <activity
-            android:name=".preview.PreviewActivity"
+            android:name="com.android.nataland.tucam.preview.PreviewActivity"
             android:screenOrientation="portrait" />
 
         <!-- FileProvider used to share photos with other apps -->

@@ -1,4 +1,4 @@
-package com.android.example.nataland.camera
+package com.android.nataland.tucam.camera
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -30,13 +30,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.example.nataland.R
-import com.android.example.nataland.preview.PreviewActivity
-import com.android.example.nataland.preview.PreviewActivity.Companion.FRAME_ID_TAG
-import com.android.example.nataland.preview.PreviewActivity.Companion.IMAGE_URI_TAG
-import com.android.example.nataland.utils.ANIMATION_FAST_MILLIS
-import com.android.example.nataland.utils.ANIMATION_SLOW_MILLIS
-import com.android.example.nataland.utils.simulateClick
+import com.android.nataland.tucam.R
+import com.android.nataland.tucam.preview.PreviewActivity
+import com.android.nataland.tucam.preview.PreviewActivity.Companion.FRAME_ID_TAG
+import com.android.nataland.tucam.preview.PreviewActivity.Companion.IMAGE_URI_TAG
+import com.android.nataland.tucam.utils.ANIMATION_FAST_MILLIS
+import com.android.nataland.tucam.utils.ANIMATION_SLOW_MILLIS
+import com.android.nataland.tucam.utils.simulateClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.camera_ui_container.*

@@ -1,15 +1,12 @@
-package com.android.example.nataland.preview
+package com.android.nataland.tucam.preview
 
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.example.nataland.R
-import jp.co.cyberagent.android.gpuimage.GPUImageView
+import com.android.nataland.tucam.R
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageMonochromeFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSepiaToneFilter

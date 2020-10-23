@@ -1,4 +1,4 @@
-package com.android.example.nataland.camera
+package com.android.nataland.tucam.camera
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,14 +15,14 @@ import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
-import com.android.example.nataland.BuildConfig
-import com.android.example.nataland.utils.padWithDisplayCutout
+import com.android.nataland.tucam.BuildConfig
+import com.android.nataland.tucam.utils.padWithDisplayCutout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.android.example.nataland.utils.showImmersive
-import com.android.example.nataland.R
+import com.android.nataland.tucam.utils.showImmersive
+import com.android.nataland.tucam.R
 import java.util.Locale
 
 val EXTENSION_WHITELIST = arrayOf("JPG")

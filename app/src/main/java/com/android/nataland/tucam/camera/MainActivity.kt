@@ -1,4 +1,4 @@
-package com.android.example.nataland.camera
+package com.android.nataland.tucam.camera
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,7 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.android.example.nataland.R
+import com.android.nataland.tucam.R
 import java.io.File
 
 const val KEY_EVENT_ACTION = "key_event_action"

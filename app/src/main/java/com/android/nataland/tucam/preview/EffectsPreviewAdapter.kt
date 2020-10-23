@@ -1,4 +1,4 @@
-package com.android.example.nataland.preview
+package com.android.nataland.tucam.preview
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.android.example.nataland.R
+import com.android.nataland.tucam.R
 import kotlinx.android.synthetic.main.view_effects_preview.view.*
 
 class EffectsPreviewAdapter : RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {

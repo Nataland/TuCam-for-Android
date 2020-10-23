@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.android.example.nataland.camera.PermissionsFragment"
+        android:name="com.android.nataland.tucam.camera.PermissionsFragment"
         android:label="PermissionsFragment" >
 
         <action
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.android.example.nataland.camera.CameraFragment"
+        android:name="com.android.nataland.tucam.camera.CameraFragment"
         android:label="CameraFragment" >
 
         <action
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/gallery_fragment"
-        android:name="com.android.example.nataland.camera.GalleryFragment"
+        android:name="com.android.nataland.tucam.camera.GalleryFragment"
         android:label="GalleryFragment" >
         <argument
             android:name="root_directory"

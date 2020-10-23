@@ -1,10 +1,10 @@
-package com.android.example.nataland.preview
+package com.android.nataland.tucam.preview
 
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.PointF
 import androidx.annotation.DrawableRes
-import com.android.example.nataland.R
+import com.android.nataland.tucam.R
 import jp.co.cyberagent.android.gpuimage.filter.*
 
 object GPUImageFilterUtils {

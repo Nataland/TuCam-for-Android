@@ -1,4 +1,4 @@
-package com.android.example.nataland.utils
+package com.android.nataland.tucam.utils
 
 import android.os.Build
 import android.view.DisplayCutout
