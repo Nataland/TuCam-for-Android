@@ -1,13 +1,26 @@
 package com.android.example.nataland.preview
 
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.example.nataland.R
+import jp.co.cyberagent.android.gpuimage.GPUImageView
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageMonochromeFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageSepiaToneFilter
 import kotlinx.android.synthetic.main.activity_preview.*
 
+
 class PreviewActivity : AppCompatActivity() {
+
+    private lateinit var effectsPreviewManager: LinearLayoutManager
+    private lateinit var effectsPreviewAdapter: EffectsPreviewAdapter
+    private val filters = listOf(GPUImageFilter(), GPUImageSepiaToneFilter(), GPUImageMonochromeFilter())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +36,23 @@ class PreviewActivity : AppCompatActivity() {
         }
 
         val imageUri = imageUriInString.toUri()
-        gpu_image_view.setImage(imageUri)
         selected_frame_view.setImageResource(frameId)
+        val processedSampleImages = listOf<Drawable>()
+
+        // Configure toolbar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         // Todo: configure recycler view with effect previews
+
+        effectsPreviewManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        effectsPreviewAdapter = EffectsPreviewAdapter(processedSampleImages)
+        image_preview.setImageURI(imageUri)
+        effects_preview.layoutManager = effectsPreviewManager
+        effects_preview.adapter = effectsPreviewAdapter
+        effectsPreviewAdapter.effectSelectedLiveData.observeForever {
+//            image_preview.setImageBitmap(images[it].gpuImage.bitmapWithFilterApplied)
+        }
     }
 
     companion object {

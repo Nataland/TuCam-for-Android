@@ -12,8 +12,8 @@
         android:background="@android:color/black"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <jp.co.cyberagent.android.gpuimage.GPUImageView
-        android:id="@+id/gpu_image_view"
+    <ImageView
+        android:id="@+id/image_preview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="3:4"
@@ -23,10 +23,10 @@
         android:id="@+id/selected_frame_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/gpu_image_view"
-        app:layout_constraintEnd_toEndOf="@id/gpu_image_view"
-        app:layout_constraintStart_toStartOf="@id/gpu_image_view"
-        app:layout_constraintTop_toTopOf="@id/gpu_image_view" />
+        app:layout_constraintBottom_toBottomOf="@id/image_preview"
+        app:layout_constraintEnd_toEndOf="@id/image_preview"
+        app:layout_constraintStart_toStartOf="@id/image_preview"
+        app:layout_constraintTop_toTopOf="@id/image_preview" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/effects_preview"
@@ -35,6 +35,6 @@
         android:layout_marginTop="@dimen/divider_width"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gpu_image_view" />
+        app:layout_constraintTop_toBottomOf="@id/image_preview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

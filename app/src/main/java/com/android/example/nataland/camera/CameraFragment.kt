@@ -65,7 +65,7 @@ class CameraFragment : Fragment() {
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var framesPreviewAdapter: FramesPreviewAdapter
-    private lateinit var effectsPreviewManager: RecyclerView.LayoutManager
+    private lateinit var framesPreviewManager: RecyclerView.LayoutManager
 
     private var displayId: Int = -1
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
@@ -245,13 +245,13 @@ class CameraFragment : Fragment() {
     }
 
     private fun setUpEffectsPreview() {
-        effectsPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        framesPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         framesPreviewAdapter = FramesPreviewAdapter(listOfFrames) // for now this only takes in frames
         framesPreviewAdapter.frameSelectedLiveData.observeForever {
             chosenFrameIndex = it
             frame_overlay.setImageResource(listOfFrames[it])
         }
-        effects_preview.layoutManager = effectsPreviewManager
+        effects_preview.layoutManager = framesPreviewManager
         effects_preview.adapter = framesPreviewAdapter
     }
 
