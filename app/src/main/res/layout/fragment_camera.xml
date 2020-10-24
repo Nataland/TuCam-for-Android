@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.nataland.tucam.camera.CameraView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/camera_container"
     android:layout_width="match_parent"
@@ -19,45 +19,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/camera_timer_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/round_button_small"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera_button_alt"
             android:padding="@dimen/spacing_small"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_timer_off" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/camera_grid_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/round_button_small"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera_button_alt"
             android:padding="@dimen/spacing_small"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_grid_off" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/camera_flash_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/round_button_small"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera_button_alt"
             android:padding="@dimen/spacing_small"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_flash_off" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/camera_switch_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/round_button_small"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera_button_alt"
             android:padding="@dimen/spacing_small"
             android:scaleType="fitCenter"
@@ -81,6 +77,15 @@
         app:layout_constraintStart_toStartOf="@id/view_finder"
         app:layout_constraintTop_toTopOf="@id/view_finder" />
 
+    <com.android.nataland.tucam.camera.GridLinesView
+        android:id="@+id/grid_lines_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintTop_toTopOf="@id/view_finder" />
+
     <View
         android:id="@+id/shutter_effect"
         android:layout_width="0dp"
@@ -92,13 +97,68 @@
         app:layout_constraintStart_toStartOf="@id/view_finder"
         app:layout_constraintTop_toTopOf="@id/view_finder" />
 
-    <FrameLayout
-        android:id="@+id/camera_controls_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/camera_ui_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/divider_width"
+        android:animateLayoutChanges="true"
+        android:layoutDirection="ltr"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frame_overlay" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@id/frame_overlay">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/camera_view_frames_preview"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/preview_height"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Camera control and gallery buttons -->
+
+        <ImageView
+            android:id="@+id/open_gallery_button"
+            android:layout_width="@dimen/round_button_medium"
+            android:layout_height="@dimen/round_button_medium"
+            android:layout_marginStart="@dimen/margin_small"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/gallery_button_alt"
+            android:padding="@dimen/spacing_small"
+            android:scaleType="fitCenter"
+            app:tint="@color/selector_ic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview"
+            app:srcCompat="@drawable/ic_photo_library" />
+
+        <ImageButton
+            android:id="@+id/camera_capture_button"
+            android:layout_width="@dimen/round_button_large"
+            android:layout_height="@dimen/round_button_large"
+            android:background="@drawable/ic_shutter"
+            android:contentDescription="@string/capture_button_alt"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview" />
+
+        <ImageView
+            android:id="@+id/frame_selection_button"
+            android:layout_width="@dimen/round_button_medium"
+            android:layout_height="@dimen/round_button_medium"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:contentDescription="@string/select_frame_button_alt"
+            android:padding="@dimen/spacing_small"
+            android:scaleType="fitCenter"
+            app:tint="@color/selector_ic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview"
+            app:srcCompat="@drawable/ic_frame" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.android.nataland.tucam.camera.CameraView>

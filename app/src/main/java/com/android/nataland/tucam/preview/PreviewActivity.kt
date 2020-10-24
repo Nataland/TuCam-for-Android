@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
@@ -18,7 +17,7 @@ import com.android.nataland.tucam.R
 import com.android.nataland.tucam.camera.FramesPreviewAdapter
 import com.android.nataland.tucam.utils.FrameUtils
 import kotlinx.android.synthetic.main.activity_preview.*
-import kotlinx.android.synthetic.main.activity_preview.effects_preview
+import kotlinx.android.synthetic.main.activity_preview.camera_view_frames_preview
 
 /**
  * Users should already have a photo taken or chosen at this point. This activity allows them to:
@@ -67,14 +66,14 @@ class PreviewActivity : AppCompatActivity() {
 
         val imageUriInString = intent.getStringExtra(IMAGE_URI_TAG)
         val frameId = intent.getIntExtra(FRAME_ID_TAG, 0)
-        val lensFacing = intent.getIntExtra(LENS_FACING_TAG, 0)
+        val isLensFacingFront = intent.getBooleanExtra(IS_LENS_FACING_FRONT_TAG, false)
         val canChooseFrames = intent.getBooleanExtra(CAN_CHOOSE_FRAMES_TAG, false)
 
         if (imageUriInString == null || frameId == 0) {
             throw Exception("image uri and frame id should never be null")
         }
 
-        if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+        if (isLensFacingFront) {
             // todo: flip image
         }
 
@@ -89,9 +88,9 @@ class PreviewActivity : AppCompatActivity() {
         effectsPreviewManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         effectsPreviewAdapter = EffectsPreviewAdapter()
         image_preview.setImage(imageUri)
-        effects_preview.layoutManager = effectsPreviewManager
-        effects_preview.adapter = effectsPreviewAdapter
-        effects_preview.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
+        camera_view_frames_preview.layoutManager = effectsPreviewManager
+        camera_view_frames_preview.adapter = effectsPreviewAdapter
+        camera_view_frames_preview.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
         effectsPreviewAdapter.effectSelectedLiveData.observeForever {
             image_preview.filter = GPUImageFilterUtils.createFilterForType(this, GPUImageFilterUtils.defaultFilters[it].filterType)
         }
@@ -128,14 +127,14 @@ class PreviewActivity : AppCompatActivity() {
         select_frame_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_primary))
         select_filter_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.white))
         frames_preview.isVisible = true
-        effects_preview.isInvisible = true
+        camera_view_frames_preview.isInvisible = true
     }
 
     private fun chooseEffects() {
         select_filter_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_primary))
         select_frame_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.white))
         frames_preview.isInvisible = true
-        effects_preview.isVisible = true
+        camera_view_frames_preview.isVisible = true
     }
 
     private fun showDiscardChangesDialog() {
@@ -151,7 +150,7 @@ class PreviewActivity : AppCompatActivity() {
     companion object {
         const val IMAGE_URI_TAG = "IMAGE_URI_TAG"
         const val FRAME_ID_TAG = "FRAME_ID_TAG"
-        const val LENS_FACING_TAG = "LENS_FACING_TAG"
+        const val IS_LENS_FACING_FRONT_TAG = "IS_LENS_FACING_FRONT_TAG"
         const val CAN_CHOOSE_FRAMES_TAG = "CAN_CHOOSE_FRAMES_TAG"
     }
 }

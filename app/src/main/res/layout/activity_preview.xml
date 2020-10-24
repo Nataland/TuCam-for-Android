@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="@id/image_preview" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/effects_preview"
+        android:id="@+id/camera_view_frames_preview"
         android:layout_width="0dp"
         android:layout_height="@dimen/preview_width"
         android:layout_marginTop="@dimen/divider_width"

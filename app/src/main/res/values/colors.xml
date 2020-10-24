@@ -8,4 +8,5 @@
     <color name="focused_color">#DDFFFFFF</color>
     <color name="pressed_color">#AAFFFFFF</color>
     <color name="status_bar_color">@android:color/black</color>
+    <color name="grid_color">#a9a9a9</color>
 </resources>
