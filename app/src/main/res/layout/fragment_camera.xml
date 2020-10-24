@@ -8,16 +8,16 @@
 
     <LinearLayout
         android:id="@+id/basic_camera_controls_strip"
-        android:orientation="horizontal"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:paddingTop="@dimen/spacing_small"
         android:paddingBottom="@dimen/spacing_small"
-        android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="wrap_content">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/camera_switch_button"
@@ -51,10 +51,22 @@
         app:layout_constraintStart_toStartOf="@id/view_finder"
         app:layout_constraintTop_toTopOf="@id/view_finder" />
 
+    <View
+        android:id="@+id/shutter_effect"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/black"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintTop_toTopOf="@id/view_finder" />
+
     <FrameLayout
         android:id="@+id/camera_controls_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/divider_width"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

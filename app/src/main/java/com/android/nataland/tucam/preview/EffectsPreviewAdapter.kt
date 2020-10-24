@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.android.nataland.tucam.R
-import kotlinx.android.synthetic.main.view_effects_preview.view.*
+import kotlinx.android.synthetic.main.view_effect_preview.view.*
 
 class EffectsPreviewAdapter : RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {
 
@@ -18,14 +18,14 @@ class EffectsPreviewAdapter : RecyclerView.Adapter<EffectsPreviewAdapter.Preview
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreviewViewHolder {
         val previewView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.view_effects_preview, parent, false)
+            .inflate(R.layout.view_effect_preview, parent, false)
 
         return PreviewViewHolder(previewView)
     }
 
     override fun onBindViewHolder(holder: PreviewViewHolder, position: Int) {
-        holder.previewView.effects_preview_root.setImageResource(GPUImageFilterUtils.defaultFilters[position].drawableRes)
-        holder.previewView.effects_preview_root.setOnClickListener {
+        holder.previewView.effect_preview_root.setImageResource(GPUImageFilterUtils.defaultFilters[position].drawableRes)
+        holder.previewView.effect_preview_root.setOnClickListener {
             _effectSelectedLiveData.postValue(position)
         }
     }

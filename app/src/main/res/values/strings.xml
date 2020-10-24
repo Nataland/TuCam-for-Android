@@ -15,4 +15,10 @@
     <string name="delete_button_alt">Delete</string>
     <string name="delete_dialog">Delete current photo?</string>
     <string name="delete_title">Confirm</string>
+    <string name="discard_changes">Discard changes?</string>
+    <string name="discard_changes_message">Are you sure you want to discard your changes?</string>
+    <string name="no">No</string>
+    <string name="discard">Discard</string>
+    <string name="save">Save</string>
+    <string name="select_picture">Select picture</string>
 </resources>

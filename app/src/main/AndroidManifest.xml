@@ -66,6 +66,7 @@
 
         </activity>
         <activity
+            android:parentActivityName=".camera.MainActivity"
             android:name="com.android.nataland.tucam.preview.PreviewActivity"
             android:screenOrientation="portrait" />
 

@@ -1,23 +1,26 @@
 package com.android.nataland.tucam.camera
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,14 +31,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.nataland.tucam.R
 import com.android.nataland.tucam.preview.PreviewActivity
+import com.android.nataland.tucam.preview.PreviewActivity.Companion.CAN_CHOOSE_FRAMES_TAG
 import com.android.nataland.tucam.preview.PreviewActivity.Companion.FRAME_ID_TAG
 import com.android.nataland.tucam.preview.PreviewActivity.Companion.IMAGE_URI_TAG
-import com.android.nataland.tucam.utils.ANIMATION_FAST_MILLIS
-import com.android.nataland.tucam.utils.ANIMATION_SLOW_MILLIS
+import com.android.nataland.tucam.preview.PreviewActivity.Companion.LENS_FACING_TAG
+import com.android.nataland.tucam.utils.FrameUtils
 import com.android.nataland.tucam.utils.simulateClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -66,6 +71,7 @@ class CameraFragment : Fragment() {
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var framesPreviewAdapter: FramesPreviewAdapter
     private lateinit var framesPreviewManager: RecyclerView.LayoutManager
+    private lateinit var cameraExecutor: ExecutorService
 
     private var displayId: Int = -1
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
@@ -74,23 +80,11 @@ class CameraFragment : Fragment() {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private var chosenFrameIndex = 0
-
-    private val listOfFrames = listOf(
-        R.drawable.frame0, R.drawable.frame1, R.drawable.frame2, R.drawable.frame3, R.drawable.frame4,
-        R.drawable.frame5, R.drawable.frame6, R.drawable.frame7, R.drawable.frame8, R.drawable.frame9,
-        R.drawable.frame10, R.drawable.frame11, R.drawable.frame12, R.drawable.frame13, R.drawable.frame14,
-        R.drawable.frame15, R.drawable.frame16, R.drawable.frame17, R.drawable.frame18, R.drawable.frame19,
-        R.drawable.frame20, R.drawable.frame21, R.drawable.frame22, R.drawable.frame23, R.drawable.frame24,
-        R.drawable.frame25, R.drawable.frame26, R.drawable.frame27, R.drawable.frame28
-    )
+    private var chosenFrameIndex = 0 // todo: put this into a view model
 
     private val displayManager by lazy {
         requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     }
-
-    /** Blocking camera operations are performed using this executor */
-    private lateinit var cameraExecutor: ExecutorService
 
     /** Volume down button receiver used to trigger shutter */
     private val volumeDownReceiver = object : BroadcastReceiver() {
@@ -203,6 +197,7 @@ class CameraFragment : Fragment() {
             setUpEffectsPreview()
         }
     }
+
     /**
      * Inflate camera controls and update the UI manually upon config changes to avoid removing
      * and re-adding the view finder from the view hierarchy; this provides a seamless rotation
@@ -219,6 +214,18 @@ class CameraFragment : Fragment() {
 
         // Enable or disable switching between cameras
         updateCameraSwitchButton()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let {
+                startPreviewActivity(
+                    uri = it,
+                    lensFacing = CameraSelector.LENS_FACING_BACK,
+                    canChooseFrames = true
+                )
+            }
+        }
     }
 
     /** Initialize CameraX, and prepare to bind the camera use cases  */
@@ -246,13 +253,14 @@ class CameraFragment : Fragment() {
 
     private fun setUpEffectsPreview() {
         framesPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        framesPreviewAdapter = FramesPreviewAdapter(listOfFrames) // for now this only takes in frames
+        framesPreviewAdapter = FramesPreviewAdapter() // for now this only takes in frames
         framesPreviewAdapter.frameSelectedLiveData.observeForever {
             chosenFrameIndex = it
-            frame_overlay.setImageResource(listOfFrames[it])
+            frame_overlay.setImageResource(FrameUtils.presetFrames[it])
         }
         effects_preview.layoutManager = framesPreviewManager
         effects_preview.adapter = framesPreviewAdapter
+        effects_preview.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.HORIZONTAL))
     }
 
     /** Declare and bind preview, capture and analysis use cases */
@@ -350,6 +358,38 @@ class CameraFragment : Fragment() {
             // Get a stable reference of the modifiable image capture use case
             imageCapture?.let { imageCapture ->
 
+                val fadeOutAnimation = AlphaAnimation(1.0f, 0.0f).apply {
+                    duration = FADE_OUT_DURATION
+                    setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationRepeat(animation: Animation?) = Unit
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            shutter_effect.alpha = 0.0f
+                            shutter_effect.isVisible = false
+                        }
+
+                        override fun onAnimationStart(animation: Animation?) = Unit
+                    })
+                }
+                val fadeInAnimation = AlphaAnimation(0.0f, 1.0f).apply {
+                    duration = FADE_IN_DURATION
+                    setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationRepeat(animation: Animation?) = Unit
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            shutter_effect.alpha = 1.0f
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                shutter_effect.startAnimation(fadeOutAnimation)
+                            }, FADE_IN_DURATION)
+                        }
+
+                        override fun onAnimationStart(animation: Animation?) {
+                            shutter_effect.isVisible = true
+                        }
+                    })
+                }
+                shutter_effect.startAnimation(fadeInAnimation)
+
                 // Create output file to hold the image
                 val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
 
@@ -375,18 +415,13 @@ class CameraFragment : Fragment() {
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                             val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                             Log.d(TAG, "Photo capture succeeded: $savedUri")
+                            startPreviewActivity(savedUri, lensFacing, false)
 
-                            val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
-                                putExtra(IMAGE_URI_TAG, savedUri.toString())
-                                putExtra(FRAME_ID_TAG, listOfFrames[chosenFrameIndex])
+                            // We can only change the foreground Drawable using API level 23+ API
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                // Update the gallery thumbnail with latest picture taken
+                                setGalleryThumbnail(savedUri)
                             }
-                            requireActivity().startActivity(intent)
-//
-//                            // We can only change the foreground Drawable using API level 23+ API
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                // Update the gallery thumbnail with latest picture taken
-//                                setGalleryThumbnail(savedUri)
-//                            }
 //
 //                            // Implicit broadcasts will be ignored for devices running API level >= 24
 //                            // so if you only target API level 24+ you can remove this statement
@@ -410,17 +445,6 @@ class CameraFragment : Fragment() {
 //                            }
                         }
                     })
-
-                // We can only change the foreground Drawable using API level 23+ API
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                    // Display flash animation to indicate that photo was captured
-                    camera_ui_container.postDelayed({
-                        camera_ui_container.foreground = ColorDrawable(Color.WHITE)
-                        camera_ui_container.postDelayed(
-                            { camera_ui_container.foreground = null }, ANIMATION_FAST_MILLIS)
-                    }, ANIMATION_SLOW_MILLIS)
-                }
             }
         }
 
@@ -444,14 +468,12 @@ class CameraFragment : Fragment() {
 
         // Listener for button used to view the most recent photo
         controls.photo_view_button.setOnClickListener {
-            // todo: pick photo from gallery
-            // Only navigate when the gallery has photos
-//            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-//                Navigation.findNavController(
-//                    requireActivity(), R.id.fragment_container
-//                ).navigate(CameraFragmentDirections
-//                    .actionCameraToGallery(outputDirectory.absolutePath))
-//            }
+            val intent = Intent().apply {
+                type = "image/*"
+                action = Intent.ACTION_GET_CONTENT
+
+            }
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.select_picture)), PICK_IMAGE)
         }
 
         // Listener for button used to change frames
@@ -462,6 +484,16 @@ class CameraFragment : Fragment() {
             val scale = if (effects_preview.isVisible) mediumIconSize / largeIconSize else 1f
             camera_capture_button.animate().scaleX(scale).scaleY(scale).apply { duration = 100 }.start()
         }
+    }
+
+    private fun startPreviewActivity(uri: Uri, lensFacing: Int, canChooseFrames: Boolean) {
+        val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
+            putExtra(IMAGE_URI_TAG, uri.toString())
+            putExtra(FRAME_ID_TAG, FrameUtils.presetFrames[chosenFrameIndex])
+            putExtra(LENS_FACING_TAG, lensFacing)
+            putExtra(CAN_CHOOSE_FRAMES_TAG, canChooseFrames)
+        }
+        requireActivity().startActivity(intent)
     }
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
@@ -575,6 +607,9 @@ class CameraFragment : Fragment() {
         private const val TAG = "nataland"
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val PHOTO_EXTENSION = ".jpg"
+        private const val PICK_IMAGE = 20
+        private const val FADE_IN_DURATION: Long = 20
+        private const val FADE_OUT_DURATION: Long = 250
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
