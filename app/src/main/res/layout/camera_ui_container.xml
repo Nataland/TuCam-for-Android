@@ -52,6 +52,7 @@
         android:contentDescription="@string/select_frame_button_alt"
         android:padding="@dimen/spacing_small"
         android:scaleType="fitCenter"
+        android:tint="@color/selector_ic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/margin_small"
