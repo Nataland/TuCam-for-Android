@@ -20,17 +20,47 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/camera_switch_button"
-            android:layout_width="@dimen/round_button_small"
+            android:id="@+id/camera_timer_button"
+            android:layout_width="0dp"
             android:layout_height="@dimen/round_button_small"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
             android:contentDescription="@string/switch_camera_button_alt"
             android:padding="@dimen/spacing_small"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/frame_selection_button"
-            app:layout_constraintStart_toEndOf="@id/camera_capture_button"
-            app:layout_constraintTop_toBottomOf="@id/effects_preview"
+            app:srcCompat="@drawable/ic_timer_off" />
+
+        <ImageButton
+            android:id="@+id/camera_grid_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/round_button_small"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/switch_camera_button_alt"
+            android:padding="@dimen/spacing_small"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_grid_off" />
+
+        <ImageButton
+            android:id="@+id/camera_flash_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/round_button_small"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/switch_camera_button_alt"
+            android:padding="@dimen/spacing_small"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_flash_off" />
+
+        <ImageButton
+            android:id="@+id/camera_switch_button"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/round_button_small"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/switch_camera_button_alt"
+            android:padding="@dimen/spacing_small"
+            android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_switch" />
     </LinearLayout>
 

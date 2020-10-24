@@ -466,6 +466,18 @@ class CameraFragment : Fragment() {
             }
         }
 
+        camera_flash_button.setOnClickListener {
+            // todo
+        }
+
+        camera_grid_button.setOnClickListener {
+            // todo
+        }
+
+        camera_timer_button.setOnClickListener {
+            // todo
+        }
+
         // Listener for button used to view the most recent photo
         controls.photo_view_button.setOnClickListener {
             val intent = Intent().apply {
