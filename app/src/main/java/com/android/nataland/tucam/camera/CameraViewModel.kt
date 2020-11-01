@@ -1,5 +1,6 @@
 package com.android.nataland.tucam.camera
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,6 +28,7 @@ class CameraViewModel : ViewModel() {
             CameraViewAction.SimulateCapturePressedFinished -> updateSimulateCapturePressedState(false)
             is CameraViewAction.FrameSelected -> onFrameSelected(viewAction.index)
             is CameraViewAction.CameraInitialized -> onSwitchButtonEnabledStateChanged(viewAction.isSwitchButtonEnabled)
+            is CameraViewAction.ImageSaved -> onImageSaved(viewAction.imageUri)
         }
     }
 
@@ -79,6 +81,10 @@ class CameraViewModel : ViewModel() {
 
     private fun updateSimulateCapturePressedState(shouldSimulateCapturePressed: Boolean) {
         postViewState { it.copy(shouldSimulateCapturePressed = shouldSimulateCapturePressed) }
+    }
+
+    private fun onImageSaved(imageUri: Uri?) {
+        postViewState { it.copy(capturedImage = imageUri) }
     }
 
     private fun postViewState(viewStateHandler: (CameraViewState) -> CameraViewState) {

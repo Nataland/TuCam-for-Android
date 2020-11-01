@@ -90,6 +90,7 @@ class CameraFragment : Fragment() {
                 CameraFragmentDirections.actionCameraToPermissions()
             )
         }
+        viewModel.handleViewAction(CameraViewAction.ImageSaved(null))
     }
 
     override fun onDestroyView() {
@@ -210,6 +211,7 @@ class CameraFragment : Fragment() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
+                    viewModel.handleViewAction(CameraViewAction.ImageSaved(savedUri))
                     Log.d(TAG, "Photo capture succeeded: $savedUri")
                     startPreviewActivity(
                         uri = savedUri,

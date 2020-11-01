@@ -25,6 +25,16 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
     fun getSurfaceProvider() = surfaceProvider
 
     fun render(viewState: CameraViewState) {
+        viewState.capturedImage?.let {
+            captured_image_view.isVisible = true
+            loading_progress_bar.isVisible = true
+            captured_image_view.setImageURI(it)
+        } ?: run {
+            captured_image_view.isVisible = false
+            loading_progress_bar.isVisible = false
+        }
+        captured_image_view.scaleX = if (viewState.isLensFacingFront) -1f else 1f
+
         if (viewState.shouldSimulateCapturePressed) {
             camera_capture_button.simulateClick()
             cameraViewActionHandler.invoke(CameraViewAction.SimulateCapturePressedFinished)

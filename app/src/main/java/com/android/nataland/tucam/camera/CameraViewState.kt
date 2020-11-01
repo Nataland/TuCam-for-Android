@@ -1,5 +1,6 @@
 package com.android.nataland.tucam.camera
 
+import android.net.Uri
 import com.android.nataland.tucam.utils.ViewState
 
 data class CameraViewState(
@@ -9,7 +10,8 @@ data class CameraViewState(
     val isGridVisible: Boolean = false,
     val frameIndex: Int = 0,
     val isSwitchButtonEnabled: Boolean = false,
-    val shouldSimulateCapturePressed: Boolean = false
+    val shouldSimulateCapturePressed: Boolean = false,
+    val capturedImage: Uri? = null,
 ) : ViewState
 
 enum class FlashState {

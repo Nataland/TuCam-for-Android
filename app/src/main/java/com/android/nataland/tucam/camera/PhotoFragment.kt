@@ -10,7 +10,6 @@ import com.android.nataland.tucam.R
 import com.bumptech.glide.Glide
 import java.io.File
 
-
 /** Fragment used for each individual page showing a photo inside of [GalleryFragment] */
 class PhotoFragment internal constructor() : Fragment() {
 

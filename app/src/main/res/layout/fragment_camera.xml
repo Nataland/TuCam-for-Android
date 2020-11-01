@@ -68,6 +68,27 @@
         app:layout_constraintTop_toBottomOf="@id/basic_camera_controls_strip" />
 
     <ImageView
+        android:id="@+id/captured_image_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintTop_toTopOf="@id/view_finder" />
+
+    <ProgressBar
+        android:id="@+id/loading_progress_bar"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintTop_toTopOf="@id/view_finder"
+        android:layout_width="wrap_content"
+        android:indeterminateTint="@color/color_primary"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_height="wrap_content"/>
+    <ImageView
         android:id="@+id/frame_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
