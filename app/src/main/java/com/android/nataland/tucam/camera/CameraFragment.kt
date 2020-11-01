@@ -24,7 +24,7 @@ import androidx.navigation.Navigation
 import com.android.nataland.tucam.R
 import com.android.nataland.tucam.preview.PreviewActivity
 import com.android.nataland.tucam.preview.PreviewActivity.Companion.CAN_CHOOSE_FRAMES_TAG
-import com.android.nataland.tucam.preview.PreviewActivity.Companion.FRAME_ID_TAG
+import com.android.nataland.tucam.preview.PreviewActivity.Companion.FRAME_INDEX_TAG
 import com.android.nataland.tucam.preview.PreviewActivity.Companion.IMAGE_URI_TAG
 import com.android.nataland.tucam.preview.PreviewActivity.Companion.IS_LENS_FACING_FRONT_TAG
 import com.android.nataland.tucam.utils.FrameUtils
@@ -294,8 +294,7 @@ class CameraFragment : Fragment() {
     private fun startPreviewActivity(uri: Uri, isFacingFront: Boolean, canChooseFrames: Boolean) {
         val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
             putExtra(IMAGE_URI_TAG, uri.toString())
-            putExtra(FRAME_ID_TAG, FrameUtils.presetFrames[viewModel.viewState.value?.frameIndex
-                ?: 0])
+            putExtra(FRAME_INDEX_TAG, viewModel.viewState.value?.frameIndex ?: 0)
             putExtra(IS_LENS_FACING_FRONT_TAG, isFacingFront)
             putExtra(CAN_CHOOSE_FRAMES_TAG, canChooseFrames)
         }
