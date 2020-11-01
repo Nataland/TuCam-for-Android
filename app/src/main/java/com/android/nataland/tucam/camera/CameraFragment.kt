@@ -159,11 +159,7 @@ class CameraFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             data?.data?.let {
-                startPreviewActivity(
-                    uri = it,
-                    lensFacing = CameraSelector.LENS_FACING_BACK,
-                    canChooseFrames = true
-                )
+                startPreviewActivity(uri = it, isFacingFront = false, canChooseFrames = true)
             }
         }
     }
@@ -198,11 +194,7 @@ class CameraFragment : Fragment() {
         val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
 
         // Setup image capture metadata
-        val metadata = Metadata().apply {
-
-            // Mirror image when using the front camera
-            isReversedHorizontal = viewModel.viewState.value?.isLensFacingFront ?: false
-        }
+        val metadata = Metadata()
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
@@ -219,8 +211,11 @@ class CameraFragment : Fragment() {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                     Log.d(TAG, "Photo capture succeeded: $savedUri")
-                    startPreviewActivity(savedUri, getLensFacing(), false)
-//
+                    startPreviewActivity(
+                        uri = savedUri,
+                        isFacingFront = getLensFacing() == CameraSelector.LENS_FACING_FRONT,
+                        canChooseFrames = false
+                    )
 //                            // Implicit broadcasts will be ignored for devices running API level >= 24
 //                            // so if you only target API level 24+ you can remove this statement
 //                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
@@ -294,12 +289,12 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun startPreviewActivity(uri: Uri, lensFacing: Int, canChooseFrames: Boolean) {
+    private fun startPreviewActivity(uri: Uri, isFacingFront: Boolean, canChooseFrames: Boolean) {
         val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
             putExtra(IMAGE_URI_TAG, uri.toString())
             putExtra(FRAME_ID_TAG, FrameUtils.presetFrames[viewModel.viewState.value?.frameIndex
                 ?: 0])
-            putExtra(IS_LENS_FACING_FRONT_TAG, lensFacing)
+            putExtra(IS_LENS_FACING_FRONT_TAG, isFacingFront)
             putExtra(CAN_CHOOSE_FRAMES_TAG, canChooseFrames)
         }
         requireActivity().startActivity(intent)

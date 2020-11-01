@@ -1,7 +1,12 @@
 package com.android.nataland.tucam.preview
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.Matrix
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -73,27 +78,36 @@ class PreviewActivity : AppCompatActivity() {
             throw Exception("image uri and frame id should never be null")
         }
 
-        if (isLensFacingFront) {
-            // todo: flip image
-        }
-
         if (canChooseFrames) {
             setUpFramesAndFilters()
         } else {
             setUpFiltersOnly()
         }
 
-        val imageUri = imageUriInString.toUri()
         selected_frame_view.setImageResource(frameId)
         effectsPreviewManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         effectsPreviewAdapter = EffectsPreviewAdapter()
-        image_preview.setImage(imageUri)
+        image_preview.setImage(getTransformedBitmap(imageUriInString, isLensFacingFront))
         camera_view_frames_preview.layoutManager = effectsPreviewManager
         camera_view_frames_preview.adapter = effectsPreviewAdapter
         camera_view_frames_preview.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
         effectsPreviewAdapter.effectSelectedLiveData.observeForever {
             image_preview.filter = GPUImageFilterUtils.createFilterForType(this, GPUImageFilterUtils.defaultFilters[it].filterType)
         }
+    }
+
+    private fun getTransformedBitmap(imageUriInString: String, shouldFlipHorizontally: Boolean) : Bitmap {
+        val matrix = Matrix()
+        val imageUri = imageUriInString.toUri()
+        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, imageUri))
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        }
+        if (shouldFlipHorizontally) {
+            matrix.postScale(-1f, 1f, bitmap.height.toFloat() / 2, bitmap.width.toFloat() / 2)
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     private fun setUpFiltersOnly() {
