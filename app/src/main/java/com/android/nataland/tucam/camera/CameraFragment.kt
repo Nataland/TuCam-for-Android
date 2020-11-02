@@ -23,11 +23,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import com.android.nataland.tucam.R
 import com.android.nataland.tucam.preview.PreviewActivity
-import com.android.nataland.tucam.preview.PreviewActivity.Companion.CAN_CHOOSE_FRAMES_TAG
-import com.android.nataland.tucam.preview.PreviewActivity.Companion.FRAME_INDEX_TAG
-import com.android.nataland.tucam.preview.PreviewActivity.Companion.IMAGE_URI_TAG
-import com.android.nataland.tucam.preview.PreviewActivity.Companion.IS_LENS_FACING_FRONT_TAG
-import com.android.nataland.tucam.utils.FrameUtils
+import com.android.nataland.tucam.preview.PreviewFragment.Companion.CAN_CHOOSE_FRAMES_TAG
+import com.android.nataland.tucam.preview.PreviewFragment.Companion.FRAME_INDEX_TAG
+import com.android.nataland.tucam.preview.PreviewFragment.Companion.IMAGE_URI_TAG
+import com.android.nataland.tucam.preview.PreviewFragment.Companion.IS_LENS_FACING_FRONT_TAG
 import com.android.nataland.tucam.utils.subscribe
 import com.android.nataland.tucam.utils.subscribeToEvent
 import java.io.File

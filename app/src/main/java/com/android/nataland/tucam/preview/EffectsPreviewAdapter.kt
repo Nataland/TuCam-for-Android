@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.android.nataland.tucam.R
+import com.android.nataland.tucam.utils.GPUImageFilterUtils
 import kotlinx.android.synthetic.main.view_effect_preview.view.*
 
 class EffectsPreviewAdapter : RecyclerView.Adapter<EffectsPreviewAdapter.PreviewViewHolder>() {

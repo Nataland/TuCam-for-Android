@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@android:color/black">
+
+    <jp.co.cyberagent.android.gpuimage.GPUImageView
+        android:id="@+id/gpu_image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="3:4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/selected_frame_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/gpu_image_preview"
+        app:layout_constraintEnd_toEndOf="@id/gpu_image_preview"
+        app:layout_constraintStart_toStartOf="@id/gpu_image_preview"
+        app:layout_constraintTop_toTopOf="@id/gpu_image_preview" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/camera_view_frames_preview"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/preview_width"
+        android:layout_marginTop="@dimen/divider_width"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gpu_image_preview" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/frames_preview"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/preview_height"
+        android:layout_marginTop="@dimen/divider_width"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gpu_image_preview" />
+
+    <Button
+        android:id="@+id/select_frame_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="@android:color/white"
+        android:drawableStart="@drawable/ic_frame"
+        android:text="@string/select_frame_button_alt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/select_filter_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frames_preview" />
+
+    <Button
+        android:id="@+id/select_filter_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="@android:color/white"
+        android:drawableStart="@drawable/ic_filter"
+        android:text="@string/select_filter_button_alt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/select_frame_button"
+        app:layout_constraintTop_toBottomOf="@id/frames_preview" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.android.nataland.tucam.preview
+package com.android.nataland.tucam.utils
 
 import android.content.Context
 import android.graphics.BitmapFactory

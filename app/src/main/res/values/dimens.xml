@@ -28,4 +28,7 @@
     <dimen name="preview_height">80dp</dimen>
     <dimen name="divider_width">1dp</dimen>
     <dimen name="preview_width">60dp</dimen>
+    <dimen name="header_size">24sp</dimen>
+    <dimen name="text_button_width">120dp</dimen>
+    <dimen name="text_button_height">60dp</dimen>
 </resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:animateLayoutChanges="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:background="@android:color/black">
+
+    <ImageView
+        android:id="@+id/success_checkmark_view"
+        android:layout_width="@dimen/round_button_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginBottom="@dimen/margin_small"
+        app:srcCompat="@drawable/ic_success_animation"
+        android:layout_height="@dimen/round_button_large"/>
+
+    <TextView
+        android:id="@+id/success_text_view"
+        android:layout_width="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/header_size"
+        android:text="@string/image_successfully_saved"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/reedit_button"
+            android:layout_width="@dimen/text_button_width"
+            android:layout_height="@dimen/text_button_height"
+            android:backgroundTint="@android:color/white"
+            android:layout_marginEnd="@dimen/margin_xsmall"
+            android:text="Edit again" />
+
+        <Button
+            android:id="@+id/home_button"
+            android:layout_width="@dimen/text_button_width"
+            android:layout_height="@dimen/text_button_height"
+            android:backgroundTint="@android:color/white"
+            android:text="Home" />
+    </LinearLayout>
+
+</LinearLayout>
