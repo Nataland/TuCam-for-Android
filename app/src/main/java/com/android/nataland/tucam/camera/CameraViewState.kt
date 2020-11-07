@@ -12,6 +12,7 @@ data class CameraViewState(
     val isSwitchButtonEnabled: Boolean = false,
     val shouldSimulateCapturePressed: Boolean = false,
     val capturedImage: Uri? = null,
+    val countDown: Int? = null
 ) : ViewState
 
 enum class FlashState {

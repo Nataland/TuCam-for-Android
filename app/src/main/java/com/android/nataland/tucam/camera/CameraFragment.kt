@@ -168,18 +168,13 @@ class CameraFragment : Fragment() {
         when (action) {
             CameraAction.FlashButtonPressed -> onFlashButtonPressed()
             CameraAction.SwitchButtonPressed -> bindCameraUseCases(getLensFacing())
-            CameraAction.TimerButtonPressed -> onTimerButtonPressed()
             CameraAction.CameraCapturePressed -> onCameraCapturePressed()
             CameraAction.PickFromGalleryPressed -> onPickFromGalleryPressed()
         }
     }
 
     private fun onFlashButtonPressed() {
-        // todo
-    }
-
-    private fun onTimerButtonPressed() {
-        // todo
+        bindCameraUseCases(getLensFacing())
     }
 
     private fun onPickFromGalleryPressed() {
@@ -269,6 +264,14 @@ class CameraFragment : Fragment() {
         imageCapture = ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             .setTargetAspectRatio(screenAspectRatio)
+            .setFlashMode(
+                when (viewModel.viewState.value?.flashState) {
+                    FlashState.OFF -> ImageCapture.FLASH_MODE_OFF
+                    FlashState.ON -> ImageCapture.FLASH_MODE_ON
+                    FlashState.AUTO -> ImageCapture.FLASH_MODE_AUTO
+                    null -> ImageCapture.FLASH_MODE_OFF
+                }
+            )
             .build()
 
         imageAnalyzer = ImageAnalysis.Builder()

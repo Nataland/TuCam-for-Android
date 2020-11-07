@@ -60,7 +60,6 @@ class CameraViewModel : ViewModel() {
                 TimerState.TEN_SECONDS -> TimerState.OFF
             })
         }
-        _action.postEvent(CameraAction.TimerButtonPressed)
     }
 
     private fun onCameraCapturePressed() {

@@ -1,6 +1,7 @@
 package com.android.nataland.tucam.camera
 
 import android.content.Context
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -25,6 +26,7 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
     fun getSurfaceProvider() = surfaceProvider
 
     fun render(viewState: CameraViewState) {
+        configureCameraCapture(viewState)
         viewState.capturedImage?.let {
             captured_image_view.isVisible = true
             loading_progress_bar.isVisible = true
@@ -62,9 +64,86 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
         grid_lines_view.isVisible = viewState.isGridVisible
     }
 
+    private fun configureCameraCapture(viewState: CameraViewState) {
+        camera_capture_button.setOnClickListener {
+            if (viewState.timerState == TimerState.OFF) {
+                captureImage()
+            } else {
+                toggleControls(false)
+                object : CountDownTimer(
+                    if (viewState.timerState == TimerState.THREE_SECONDS) THREE_SECONDS_IN_MILLI else TEN_SECONDS_IN_MILLI,
+                    ONE_SECOND_IN_MILLI
+                ) {
+                    override fun onFinish() {
+                        captureImage()
+                        toggleControls(true)
+                    }
+
+                    override fun onTick(millisUntilFinished: Long) {
+                        countdown_text_view.isVisible = true
+                        countdown_text_view.text = ((millisUntilFinished / ONE_SECOND_IN_MILLI) + 1).toString()
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                countdown_text_view.isVisible = false
+                            },
+                            800
+                        )
+                    }
+                }.start()
+            }
+        }
+    }
+
+    private fun toggleControls(isEnabled: Boolean) {
+        camera_flash_button.isEnabled = isEnabled
+        camera_grid_button.isEnabled = isEnabled
+        camera_switch_button.isEnabled = isEnabled
+        camera_timer_button.isEnabled = isEnabled
+        camera_capture_button.isEnabled = isEnabled
+    }
+
+    private fun captureImage() {
+        cameraViewActionHandler.invoke(CameraViewAction.CameraCapturePressed)
+
+        val fadeOutAnimation = AlphaAnimation(1.0f, 0.0f).apply {
+            duration = FADE_OUT_DURATION
+            setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationRepeat(animation: Animation?) = Unit
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    shutter_effect.alpha = 0.0f
+                    shutter_effect.isVisible = false
+                }
+
+                override fun onAnimationStart(animation: Animation?) = Unit
+            })
+        }
+        val fadeInAnimation = AlphaAnimation(0.0f, 1.0f).apply {
+            duration = FADE_IN_DURATION
+            setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationRepeat(animation: Animation?) = Unit
+
+                override fun onAnimationEnd(animation: Animation?) {
+                    shutter_effect.alpha = 1.0f
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        shutter_effect.startAnimation(fadeOutAnimation)
+                    }, FADE_IN_DURATION)
+                }
+
+                override fun onAnimationStart(animation: Animation?) {
+                    shutter_effect.isVisible = true
+                }
+            })
+        }
+        shutter_effect.startAnimation(fadeInAnimation)
+    }
+
     companion object {
         private const val FADE_IN_DURATION: Long = 20
         private const val FADE_OUT_DURATION: Long = 250
+        private const val THREE_SECONDS_IN_MILLI: Long = 3000
+        private const val TEN_SECONDS_IN_MILLI: Long = 10000
+        private const val ONE_SECOND_IN_MILLI: Long = 1000
 
         fun inflate(
             layoutInflater: LayoutInflater,
@@ -79,7 +158,6 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
                 camera_view_frames_preview.adapter = framesPreviewAdapter
                 camera_view_frames_preview.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL))
                 configureToolbar()
-                configureCameraCapture()
                 configureFrameSelectionButton()
                 configureGalleryButton()
             }
@@ -106,44 +184,6 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
             camera_timer_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.TimerButtonPressed) }
             camera_flash_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.FlashButtonPressed) }
             camera_switch_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.SwitchButtonPressed) }
-        }
-
-        private fun CameraView.configureCameraCapture() {
-            camera_capture_button.setOnClickListener {
-                cameraViewActionHandler.invoke(CameraViewAction.CameraCapturePressed)
-
-                val fadeOutAnimation = AlphaAnimation(1.0f, 0.0f).apply {
-                    duration = FADE_OUT_DURATION
-                    setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationRepeat(animation: Animation?) = Unit
-
-                        override fun onAnimationEnd(animation: Animation?) {
-                            shutter_effect.alpha = 0.0f
-                            shutter_effect.isVisible = false
-                        }
-
-                        override fun onAnimationStart(animation: Animation?) = Unit
-                    })
-                }
-                val fadeInAnimation = AlphaAnimation(0.0f, 1.0f).apply {
-                    duration = FADE_IN_DURATION
-                    setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationRepeat(animation: Animation?) = Unit
-
-                        override fun onAnimationEnd(animation: Animation?) {
-                            shutter_effect.alpha = 1.0f
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                shutter_effect.startAnimation(fadeOutAnimation)
-                            }, FADE_IN_DURATION)
-                        }
-
-                        override fun onAnimationStart(animation: Animation?) {
-                            shutter_effect.isVisible = true
-                        }
-                    })
-                }
-                shutter_effect.startAnimation(fadeInAnimation)
-            }
         }
     }
 }

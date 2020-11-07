@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.nataland.tucam.camera.CameraView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/camera_container"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
@@ -106,6 +108,18 @@
         app:layout_constraintEnd_toEndOf="@id/view_finder"
         app:layout_constraintStart_toStartOf="@id/view_finder"
         app:layout_constraintTop_toTopOf="@id/view_finder" />
+
+    <TextView
+        android:id="@+id/countdown_text_view"
+        android:layout_width="wrap_content"
+        android:textSize="96sp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="@id/view_finder"
+        app:layout_constraintBottom_toBottomOf="@id/view_finder"
+        app:layout_constraintStart_toStartOf="@id/view_finder"
+        app:layout_constraintEnd_toEndOf="@id/view_finder"
+        android:visibility="gone"/>
 
     <View
         android:id="@+id/shutter_effect"
