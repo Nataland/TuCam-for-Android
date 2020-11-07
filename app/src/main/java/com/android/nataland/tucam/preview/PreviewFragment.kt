@@ -57,9 +57,6 @@ class PreviewFragment : Fragment() {
                 true
             }
             R.id.menu_save -> {
-                Toast.makeText(requireContext(), "Save pressed", Toast.LENGTH_SHORT).show()
-                Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                    PreviewFragmentDirections.actionPreviewToSaved())
                 saveImageWithFilter()
                 true
             }
@@ -105,12 +102,12 @@ class PreviewFragment : Fragment() {
     }
 
     private fun saveImageWithFilter() {
+        Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(PreviewFragmentDirections.actionPreviewToSaved())
         val bitmapWithFilterApplied = gpu_image_preview.gpuImage.bitmapWithFilterApplied
         val canvas = Canvas(bitmapWithFilterApplied)
         val frame = BitmapFactory.decodeResource(resources, FrameUtils.presetFrames[frameIndex])
         canvas.drawBitmap(frame, null, Rect(0, 0, bitmapWithFilterApplied.width, bitmapWithFilterApplied.height), Paint())
         saveImage(bitmapWithFilterApplied, requireContext(), resources.getString(R.string.app_name))
-        // todo: Unfreeze up after image saved
     }
 
     /**

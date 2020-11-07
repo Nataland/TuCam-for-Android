@@ -90,6 +90,7 @@
         android:indeterminate="true"
         android:visibility="gone"
         android:layout_height="wrap_content"/>
+
     <ImageView
         android:id="@+id/frame_overlay"
         android:layout_width="0dp"
