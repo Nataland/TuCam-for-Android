@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isInvisible
@@ -117,7 +116,7 @@ class PreviewFragment : Fragment() {
     private fun saveImage(bitmap: Bitmap, context: Context, folderName: String) {
         if (Build.VERSION.SDK_INT >= 29) {
             val values = contentValues()
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + folderName)
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$folderName")
             values.put(MediaStore.Images.Media.IS_PENDING, true)
             // RELATIVE_PATH and IS_PENDING are introduced in API 29.
 
