@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.nataland.tucam.camera.CameraView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/camera_container"
     android:layout_width="match_parent"
     android:animateLayoutChanges="true"
@@ -146,7 +145,7 @@
         app:layout_constraintTop_toBottomOf="@id/frame_overlay">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/camera_view_frames_preview"
+            android:id="@+id/camera_frames_preview"
             android:layout_width="0dp"
             android:layout_height="@dimen/preview_height"
             android:visibility="gone"
@@ -168,7 +167,7 @@
             app:tint="@color/selector_ic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview"
+            app:layout_constraintTop_toBottomOf="@id/effects_preview"
             app:srcCompat="@drawable/ic_photo_library" />
 
         <ImageButton
@@ -181,7 +180,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview" />
+            app:layout_constraintTop_toBottomOf="@id/effects_preview" />
 
         <ImageView
             android:id="@+id/frame_selection_button"
@@ -194,7 +193,7 @@
             app:tint="@color/selector_ic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/camera_view_frames_preview"
+            app:layout_constraintTop_toBottomOf="@id/effects_preview"
             app:srcCompat="@drawable/ic_frame" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.android.nataland.tucam.camera.CameraView>

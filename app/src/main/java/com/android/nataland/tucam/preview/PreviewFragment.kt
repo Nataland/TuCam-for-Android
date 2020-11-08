@@ -2,109 +2,93 @@ package com.android.nataland.tucam.preview
 
 import android.content.ContentValues
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.*
-import androidx.core.content.ContextCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.net.toUri
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.nataland.tucam.R
 import com.android.nataland.tucam.camera.FramesPreviewAdapter
 import com.android.nataland.tucam.utils.FrameUtils
-import com.android.nataland.tucam.utils.GPUImageFilterUtils
-import kotlinx.android.synthetic.main.fragment_preview.*
+import com.android.nataland.tucam.utils.subscribe
+import com.android.nataland.tucam.utils.subscribeToEvent
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
 class PreviewFragment : Fragment() {
-    private lateinit var effectsPreviewManager: LinearLayoutManager
-    private lateinit var effectsPreviewAdapter: EffectsPreviewAdapter
-    private lateinit var framesPreviewManager: LinearLayoutManager
-    private lateinit var framesPreviewAdapter: FramesPreviewAdapter
-    private var frameIndex: Int = 0
+    private lateinit var previewView: PreviewView
+    private val viewModel: PreviewViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_preview, container, false)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_preview, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                requireActivity().showDiscardChangesDialog()
-                true
-            }
-            R.id.menu_save -> {
-                saveImageWithFilter()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    ): View? {
         val imageUriInString = requireActivity().intent.getStringExtra(IMAGE_URI_TAG)
-        frameIndex = requireActivity().intent.getIntExtra(FRAME_INDEX_TAG, -1)
+        val frameIndex = requireActivity().intent.getIntExtra(FRAME_INDEX_TAG, -1)
         val isLensFacingFront = requireActivity().intent.getBooleanExtra(IS_LENS_FACING_FRONT_TAG, false)
         val canChooseFrames = requireActivity().intent.getBooleanExtra(CAN_CHOOSE_FRAMES_TAG, false)
 
-        if (imageUriInString == null) {
-            throw Exception("image uri and frame id should never be null")
+        if (!::previewView.isInitialized) {
+            val framesAdapter = FramesPreviewAdapter().apply {
+                frameSelectedLiveData.observeForever {
+                    viewModel.handleViewAction(PreviewViewAction.FrameSelected(it))
+                }
+            }
+            val effectsAdapter = EffectsPreviewAdapter().apply {
+                effectSelectedLiveData.observeForever {
+                    viewModel.handleViewAction(PreviewViewAction.EffectSelected(it))
+                }
+            }
+
+            if (imageUriInString == null) {
+                throw Exception("image uri and frame id should never be null")
+            }
+            previewView = PreviewView.inflate(
+                canSelectFrames = canChooseFrames,
+                isLensFacingFront = isLensFacingFront,
+                imageUri = imageUriInString.toUri(),
+                layoutInflater = inflater,
+                framesAdapter = framesAdapter,
+                effectsAdapter = effectsAdapter,
+                viewActionHandler = viewModel::handleViewAction
+            )
         }
-
-        if (canChooseFrames) {
-            setUpFramesAndFilters()
-        } else {
-            setUpFiltersOnly()
+        viewModel.viewState.subscribe(this) { viewState ->
+            viewState?.let { previewView.render(it) }
         }
+        viewModel.handleViewAction(PreviewViewAction.Init(frameIndex))
+        return previewView
+    }
 
-        selected_frame_view.setImageResource(FrameUtils.presetFrames[frameIndex])
-        effectsPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        effectsPreviewAdapter = EffectsPreviewAdapter()
-
-        val imageUri = imageUriInString.toUri()
-        if (isLensFacingFront) {
-            gpu_image_preview.setImage(getTransformedBitmap(imageUri))
-        } else {
-            gpu_image_preview.setImage(imageUri)
-        }
-
-        camera_view_frames_preview.layoutManager = effectsPreviewManager
-        camera_view_frames_preview.adapter = effectsPreviewAdapter
-        camera_view_frames_preview.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.HORIZONTAL))
-        effectsPreviewAdapter.effectSelectedLiveData.observeForever {
-            gpu_image_preview.filter = GPUImageFilterUtils.createFilterForType(requireContext(), GPUImageFilterUtils.defaultFilters[it].filterType)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.action.subscribeToEvent(this) { action ->
+            handleAction(action)
+            true
         }
     }
 
-    private fun saveImageWithFilter() {
+    private fun handleAction(action: PreviewAction) {
+        when (action) {
+            PreviewAction.NavigateUp -> requireActivity().showDiscardChangesDialog()
+            is PreviewAction.SaveImage -> saveImageWithFilter(action.bitmap)
+        }
+    }
+
+    private fun saveImageWithFilter(bitmapWithFilterApplied: Bitmap) {
         Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(PreviewFragmentDirections.actionPreviewToSaved())
-        val bitmapWithFilterApplied = gpu_image_preview.gpuImage.bitmapWithFilterApplied
         val canvas = Canvas(bitmapWithFilterApplied)
-        val frame = BitmapFactory.decodeResource(resources, FrameUtils.presetFrames[frameIndex])
+        val frame = BitmapFactory.decodeResource(resources, FrameUtils.presetFrames[viewModel.viewState.value?.frameIndex ?: 0])
         canvas.drawBitmap(frame, null, Rect(0, 0, bitmapWithFilterApplied.width, bitmapWithFilterApplied.height), Paint())
         saveImage(bitmapWithFilterApplied, requireContext(), resources.getString(R.string.app_name))
     }
@@ -162,58 +146,6 @@ class PreviewFragment : Fragment() {
                 e.printStackTrace()
             }
         }
-    }
-
-    private fun getTransformedBitmap(imageUri: Uri): Bitmap {
-        val matrix = Matrix()
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, imageUri))
-        } else {
-            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
-        }
-        matrix.postScale(-1f, 1f, bitmap.height.toFloat() / 2, bitmap.width.toFloat() / 2)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-    }
-
-    private fun setUpFiltersOnly() {
-        select_filter_button.isVisible = false
-        select_frame_button.isVisible = false
-        select_filter_button.isVisible = false
-        select_frame_button.isVisible = false
-        chooseEffects()
-    }
-
-    private fun setUpFramesAndFilters() {
-        framesPreviewManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        framesPreviewAdapter = FramesPreviewAdapter()
-        framesPreviewAdapter.frameSelectedLiveData.observeForever {
-            selected_frame_view.setImageResource(FrameUtils.presetFrames[it])
-        }
-        frames_preview.layoutManager = framesPreviewManager
-        frames_preview.adapter = framesPreviewAdapter
-        select_filter_button.isVisible = true
-        select_frame_button.isVisible = true
-        chooseFrames()
-        select_filter_button.setOnClickListener {
-            chooseEffects()
-        }
-        select_frame_button.setOnClickListener {
-            chooseFrames()
-        }
-    }
-
-    private fun chooseFrames() {
-        select_frame_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_primary))
-        select_filter_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), android.R.color.white))
-        frames_preview.isVisible = true
-        camera_view_frames_preview.isInvisible = true
-    }
-
-    private fun chooseEffects() {
-        select_filter_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_primary))
-        select_frame_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), android.R.color.white))
-        frames_preview.isInvisible = true
-        camera_view_frames_preview.isVisible = true
     }
 
     companion object {

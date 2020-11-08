@@ -138,6 +138,29 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
         shutter_effect.startAnimation(fadeInAnimation)
     }
 
+    private fun configureGalleryButton() {
+        open_gallery_button.setOnClickListener {
+            cameraViewActionHandler.invoke(CameraViewAction.PickFromGalleryPressed)
+        }
+    }
+
+    private fun configureFrameSelectionButton() {
+        frame_selection_button.setOnClickListener {
+            camera_frames_preview.isVisible = !camera_frames_preview.isVisible
+            val mediumIconSize = context.resources.getDimensionPixelSize(R.dimen.round_button_medium).toFloat()
+            val largeIconSize = context.resources.getDimensionPixelSize(R.dimen.round_button_large).toFloat()
+            val scale = if (camera_frames_preview.isVisible) mediumIconSize / largeIconSize else 1f
+            camera_capture_button.animate().scaleX(scale).scaleY(scale).apply { duration = 100 }.start()
+        }
+    }
+
+    private fun configureToolbar() {
+        camera_grid_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.GridButtonPressed) }
+        camera_timer_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.TimerButtonPressed) }
+        camera_flash_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.FlashButtonPressed) }
+        camera_switch_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.SwitchButtonPressed) }
+    }
+
     companion object {
         private const val FADE_IN_DURATION: Long = 20
         private const val FADE_OUT_DURATION: Long = 250
@@ -154,36 +177,13 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
                 framesPreviewAdapter = adapter
                 cameraViewActionHandler = viewActionHandler
                 surfaceProvider = view_finder.surfaceProvider
-                camera_view_frames_preview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                camera_view_frames_preview.adapter = framesPreviewAdapter
-                camera_view_frames_preview.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL))
+                camera_frames_preview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                camera_frames_preview.adapter = framesPreviewAdapter
+                camera_frames_preview.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL))
                 configureToolbar()
                 configureFrameSelectionButton()
                 configureGalleryButton()
             }
-        }
-
-        private fun CameraView.configureGalleryButton() {
-            open_gallery_button.setOnClickListener {
-                cameraViewActionHandler.invoke(CameraViewAction.PickFromGalleryPressed)
-            }
-        }
-
-        private fun CameraView.configureFrameSelectionButton() {
-            frame_selection_button.setOnClickListener {
-                camera_view_frames_preview.isVisible = !camera_view_frames_preview.isVisible
-                val mediumIconSize = context.resources.getDimensionPixelSize(R.dimen.round_button_medium).toFloat()
-                val largeIconSize = context.resources.getDimensionPixelSize(R.dimen.round_button_large).toFloat()
-                val scale = if (camera_view_frames_preview.isVisible) mediumIconSize / largeIconSize else 1f
-                camera_capture_button.animate().scaleX(scale).scaleY(scale).apply { duration = 100 }.start()
-            }
-        }
-
-        private fun CameraView.configureToolbar() {
-            camera_grid_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.GridButtonPressed) }
-            camera_timer_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.TimerButtonPressed) }
-            camera_flash_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.FlashButtonPressed) }
-            camera_switch_button.setOnClickListener { cameraViewActionHandler.invoke(CameraViewAction.SwitchButtonPressed) }
         }
     }
 }
