@@ -69,7 +69,7 @@ class PreviewView(context: Context, attributeSet: AttributeSet) : ConstraintLayo
             layoutInflater: LayoutInflater,
             framesAdapter: FramesPreviewAdapter,
             effectsAdapter: EffectsPreviewAdapter,
-            viewActionHandler: (PreviewViewAction) -> Unit,
+            viewActionHandler: (PreviewViewAction) -> Unit
         ): PreviewView {
             return (layoutInflater.inflate(R.layout.fragment_preview, null, false) as PreviewView).apply {
                 preview_toolbar.inflateMenu(R.menu.menu_preview)

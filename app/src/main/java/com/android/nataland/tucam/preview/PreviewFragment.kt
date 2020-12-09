@@ -33,10 +33,10 @@ class PreviewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val imageUriInString = requireActivity().intent.getStringExtra(IMAGE_URI_TAG)
-        val frameIndex = requireActivity().intent.getIntExtra(FRAME_INDEX_TAG, -1)
-        val isLensFacingFront = requireActivity().intent.getBooleanExtra(IS_LENS_FACING_FRONT_TAG, false)
-        val canChooseFrames = requireActivity().intent.getBooleanExtra(CAN_CHOOSE_FRAMES_TAG, false)
+        val imageUriInString = arguments?.getString(IMAGE_URI_TAG)
+        val frameIndex = arguments?.getInt(FRAME_INDEX_TAG, -1) ?: -1
+        val isLensFacingFront = arguments?.getBoolean(IS_LENS_FACING_FRONT_TAG, false) ?: false
+        val canChooseFrames = arguments?.getBoolean(CAN_CHOOSE_FRAMES_TAG, false) ?: false
 
         if (!::previewView.isInitialized) {
             val framesAdapter = FramesPreviewAdapter().apply {
@@ -86,7 +86,7 @@ class PreviewFragment : Fragment() {
     }
 
     private fun saveImageWithFilter(bitmapWithFilterApplied: Bitmap) {
-        Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(PreviewFragmentDirections.actionPreviewToSaved())
+        Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(R.id.saved_fragment, arguments)
         val canvas = Canvas(bitmapWithFilterApplied)
         val frame = BitmapFactory.decodeResource(resources, FrameUtils.presetFrames[viewModel.viewState.value?.frameIndex ?: 0])
         canvas.drawBitmap(frame, null, Rect(0, 0, bitmapWithFilterApplied.width, bitmapWithFilterApplied.height), Paint())

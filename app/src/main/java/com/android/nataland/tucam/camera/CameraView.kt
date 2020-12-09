@@ -171,7 +171,7 @@ class CameraView(context: Context, attributeSet: AttributeSet?) : ConstraintLayo
         fun inflate(
             layoutInflater: LayoutInflater,
             adapter: FramesPreviewAdapter,
-            viewActionHandler: (CameraViewAction) -> Unit,
+            viewActionHandler: (CameraViewAction) -> Unit
         ): CameraView {
             return (layoutInflater.inflate(R.layout.fragment_camera, null, false) as CameraView).apply {
                 framesPreviewAdapter = adapter

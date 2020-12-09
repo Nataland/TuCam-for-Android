@@ -295,10 +295,13 @@ class CameraFragment : Fragment() {
 
     private fun startPreviewActivity(uri: Uri, isFacingFront: Boolean, canChooseFrames: Boolean) {
         val intent = Intent(requireContext(), PreviewActivity::class.java).apply {
-            putExtra(IMAGE_URI_TAG, uri.toString())
-            putExtra(FRAME_INDEX_TAG, viewModel.viewState.value?.frameIndex ?: 0)
-            putExtra(IS_LENS_FACING_FRONT_TAG, isFacingFront)
-            putExtra(CAN_CHOOSE_FRAMES_TAG, canChooseFrames)
+            val bundle = Bundle().apply {
+                putExtra(IMAGE_URI_TAG, uri.toString())
+                putExtra(FRAME_INDEX_TAG, viewModel.viewState.value?.frameIndex ?: 0)
+                putExtra(IS_LENS_FACING_FRONT_TAG, isFacingFront)
+                putExtra(CAN_CHOOSE_FRAMES_TAG, canChooseFrames)
+            }
+            putExtras(bundle)
         }
         requireActivity().startActivity(intent)
     }

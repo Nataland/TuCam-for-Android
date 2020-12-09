@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.android.nataland.tucam.R
 import kotlinx.android.synthetic.main.fragment_image_saved.*
@@ -26,8 +27,7 @@ class ImageSavedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reedit_button.setOnClickListener {
-            // todo: pass in arguments and navigate
-//            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigateUp()
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(R.id.preview_fragment, arguments)
         }
         home_button.setOnClickListener {
             requireActivity().finish()
